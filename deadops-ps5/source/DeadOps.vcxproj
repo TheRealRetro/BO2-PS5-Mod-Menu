@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ORBIS">
+      <Configuration>Debug</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ORBIS">
+      <Configuration>Release</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="detour.cpp" />
+    <ClCompile Include="hde64.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="compiler\gsc_compile.cpp" />
+    <ClCompile Include="compiler\t6\assembler.cpp" />
+    <ClCompile Include="compiler\t6\compiler.cpp" />
+    <ClCompile Include="compiler\t6\context.cpp" />
+    <ClCompile Include="compiler\t6\lexer.cpp" />
+    <ClCompile Include="compiler\t6\parser.cpp" />
+    <ClCompile Include="compiler\t6\resolver.cpp" />
+    <ClCompile Include="compiler\t6\t6.cpp" />
+    <ClCompile Include="compiler\t6\misc\nodetree.cpp" />
+    <ClCompile Include="compiler\utils\reader.cpp" />
+    <ClCompile Include="compiler\utils\string.cpp" />
+    <ClCompile Include="compiler\utils\writer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="definitions.hpp" />
+    <ClInclude Include="detour.hpp" />
+    <ClInclude Include="hde64.h" />
+    <ClInclude Include="headers.hpp" />
+    <ClInclude Include="Table64.h" />
+    <ClInclude Include="utilities.hpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath12)</VCTargetsPath>
+    <ProjectGuid>{1E34E68B-2523-4453-ADE3-45E271276F29}</ProjectGuid>
+    <ProjectName>DeadOps</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>Clang</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>Clang</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(DebuggerFlavor)'=='ORBISDebugger'" Label="OverrideDebuggerDefaults">
+  </PropertyGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
+    <TargetExt>.prx</TargetExt>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CppExceptions>true</CppExceptions>
+      <OptimizationLevel>Levelz</OptimizationLevel>
+      <CppLanguageStd>Cpp20</CppLanguageStd>
+      <AdditionalIncludeDirectories>$(ProjectDir)compiler;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- The vendored GSC backend needs RTTI (typeid/dynamic_cast in the AST).
+           This toolset defaults it off and exposes no property for it, and with
+           RTTI off the AST node type also stops being constructible. -->
+      <AdditionalOptions>-frtti %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libc_stub_weak.a;libkernel_stub_weak.a;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\SCE\ORBIS SDKs\4.500\target\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <InfoStripping>StripSymsAndDebug</InfoStripping>
+    </Link>
+    <PostBuildEvent>
+      <Command>:: Run the downgrade script: Read from build dir, write temp to project root
+python.exe "$(ProjectDir)downgrade_elf.py" --verbose --sdk-version 04.500.000 "$(TargetDir)$(TargetName).prx" "$(ProjectDir)$(TargetName).prx.down"
+:: Run the fself tool: Read temp from project root, save final .sprx to build dir
+python.exe "$(ProjectDir)make_fself.py" "$(ProjectDir)$(TargetName).prx.down" "$(TargetDir)$(TargetName).sprx" --fw-version 0x04050000
+:: Cleanup: Remove the original .prx from build dir and the temp file from project root
+del "$(TargetDir)$(TargetName).prx"
+del "$(ProjectDir)$(TargetName).prx.down"
+:: FTP the built .sprx to the console
+curl -T "$(TargetDir)$(TargetName).sprx" --user "anonymous:" --ftp-create-dirs --disable-epsv --silent --show-error "ftp://10.0.0.164:2121/data/DeadOps/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <OptimizationLevel>Levelz</OptimizationLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CppExceptions>true</CppExceptions>
+      <CppLanguageStd>Cpp20</CppLanguageStd>
+      <AdditionalIncludeDirectories>$(ProjectDir)compiler;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- The vendored GSC backend needs RTTI (typeid/dynamic_cast in the AST).
+           This toolset defaults it off and exposes no property for it, and with
+           RTTI off the AST node type also stops being constructible. -->
+      <AdditionalOptions>-frtti %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libc_stub_weak.a;libkernel_stub_weak.a;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\SCE\ORBIS SDKs\4.500\target\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <InfoStripping>StripSymsAndDebug</InfoStripping>
+    </Link>
+    <PostBuildEvent>
+      <Command>:: Run the downgrade script: Read from build dir, write temp to project root
+python.exe "$(ProjectDir)downgrade_elf.py" --verbose --sdk-version 04.500.000 "$(TargetDir)$(TargetName).prx" "$(ProjectDir)$(TargetName).prx.down"
+:: Run the fself tool: Read temp from project root, save final .sprx to build dir
+python.exe "$(ProjectDir)make_fself.py" "$(ProjectDir)$(TargetName).prx.down" "$(TargetDir)$(TargetName).sprx" --fw-version 0x04050000
+:: Cleanup: Remove the original .prx from build dir and the temp file from project root
+del "$(TargetDir)$(TargetName).prx"
+del "$(ProjectDir)$(TargetName).prx.down"
+:: FTP the built .sprx to the console
+curl -T "$(TargetDir)$(TargetName).sprx" --user "anonymous:" --ftp-create-dirs --disable-epsv --silent --show-error "ftp://10.0.0.164:2121/data/DeadOps/"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

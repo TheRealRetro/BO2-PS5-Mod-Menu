@@ -1,0 +1,9 @@
+# Extracted game binaries and disassembly (game code, never commit)
+re/
+# Build outputs
+payload/obj/
+payload/*.elf
+host/obj/
+host/gscc
+host/hook_test
+*.gscbin

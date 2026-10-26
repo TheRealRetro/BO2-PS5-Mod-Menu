@@ -1,0 +1,6 @@
+# Built in Linux/WSL: keep scripts and assembly LF on every checkout
+*.sh                 text eol=lf
+*.S                  text eol=lf
+*.py                 text eol=lf
+installer/Makefile   text eol=lf
+installer/tooling/prospero-clang18 text eol=lf

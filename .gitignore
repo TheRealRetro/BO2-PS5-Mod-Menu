@@ -1,0 +1,21 @@
+# Game files and dumps: never commit
+/PPSA34502-app0/
+/*.elf
+/dvars_BO2_ALL.*
+/Note.txt
+/deadops-ps5/re/
+
+# Upstream DeadOps clone history, kept locally only
+/deadops-ps5/.git-upstream/
+
+# Build outputs (the app ships as a GitHub release)
+/installer/build/
+/installer/dist/
+/installer/assets/deadops-ps5.elf
+obj/
+
+# Third-party files kept locally only (unlicensed or binary)
+/installer/third_party/
+
+# Local build settings (paths on this PC)
+/installer/.env

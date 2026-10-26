@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DeadOps", "DeadOps.vcxproj", "{1E34E68B-2523-4453-ADE3-45E271276F29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ORBIS = Debug|ORBIS
+		Release|ORBIS = Release|ORBIS
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E34E68B-2523-4453-ADE3-45E271276F29}.Debug|ORBIS.ActiveCfg = Debug|ORBIS
+		{1E34E68B-2523-4453-ADE3-45E271276F29}.Debug|ORBIS.Build.0 = Debug|ORBIS
+		{1E34E68B-2523-4453-ADE3-45E271276F29}.Release|ORBIS.ActiveCfg = Release|ORBIS
+		{1E34E68B-2523-4453-ADE3-45E271276F29}.Release|ORBIS.Build.0 = Release|ORBIS
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
